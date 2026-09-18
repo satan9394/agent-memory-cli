@@ -417,8 +417,11 @@ export function inspectAndRecord(
   recordInspection(inspection);
 
   // Also log to stderr for real-time visibility
+  // userId is the raw prefix of the caller's API key (see the derivation above), so it must
+  // never reach a log in clear text. keyId is a one-way sha256 prefix and stays as the
+  // stable correlation handle for debugging.
   console.error(
-    `[identity] userId=${identity.userId ?? "?"} keyId=${identity.keyId} ` +
+    `[identity] userId=${identity.userId ? "<redacted>" : "?"} keyId=${identity.keyId} ` +
     `sessionId=${identity.sessionId ?? "none"} ` +
     `wechatId=${identity.wechatWorkId ?? "none"} ` +
     `user=${identity.userInfo?.usernameFromPath ?? "?"} ` +
