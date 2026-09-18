@@ -2,7 +2,9 @@ name: CI
 
 on:
   pull_request:
-    branches: [main]
+    branches: [feat/server_team, main]
+  push:
+    branches: [feat/server_team, main]
 
 # Cancel previous runs for the same PR / branch
 concurrency:
