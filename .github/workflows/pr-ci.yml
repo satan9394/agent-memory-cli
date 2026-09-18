@@ -23,9 +23,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Node 22.x ships npm 10, whose peer resolver crashes on MemoryCore's
+      # vitest@4 peer graph ("Cannot read properties of null (reading 'edgesOut')").
+      # Node 24 ships npm 11, which resolves it; engines allows >=22.16.0.
       - uses: actions/setup-node@v4
         with:
-          node-version: "22"
+          node-version: "24"
 
       - name: Cache node_modules
         uses: actions/cache@v4
@@ -48,7 +51,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: "22"
+          node-version: "24"
 
       - name: Restore node_modules
         uses: actions/cache@v4
