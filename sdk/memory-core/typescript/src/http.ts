@@ -5,7 +5,8 @@
  * - Envelope unwrap: `code === 0` → return `data`; else throw `TDAMError`
  * - trace_id: extracted from `x-trace-id` response header
  * - Zero runtime dependencies — uses native `fetch`.
- * - TLS: `rejectUnauthorized` defaults to `false` (self-signed cert friendly).
+ * - TLS: certificate verification is ON by default. Callers may opt out
+ *   explicitly with `rejectUnauthorized: false` (self-signed dev endpoints).
  */
 
 import { TDAMError } from "./errors.js";
@@ -20,7 +21,7 @@ export interface HttpTransportOptions {
   /** 用户 API 密钥（x-tdai-user-key）；user/create、user/delete 须 system_admin key。 */
   userKey?: string;
   timeout?: number;
-  /** Whether to reject self-signed / invalid TLS certs. Default: false. */
+  /** Whether to reject self-signed / invalid TLS certs. Default: true. */
   rejectUnauthorized?: boolean;
 }
 
@@ -42,22 +43,25 @@ export class HttpTransport {
       this.headers["x-tdai-user-key"] = opts.userKey;
     }
 
-    // When rejectUnauthorized=false (default), create an undici Agent that
-    // skips TLS certificate validation. This mirrors the Python SDK's
-    // `verify=False` default for self-signed cert environments.
-    if (opts.rejectUnauthorized !== true) {
+    // TLS certificate verification is ON by default. Callers must explicitly
+    // opt out with `rejectUnauthorized: false`; it is never disabled implicitly.
+    const rejectUnauthorized = opts.rejectUnauthorized !== false;
+    if (!rejectUnauthorized) {
+      console.warn(
+        "[HttpTransport] TLS certificate validation is disabled " +
+          "(rejectUnauthorized: false). This is insecure and should only be " +
+          "used for local development against self-signed certificates.",
+      );
       try {
         // Node 18+ bundles undici; dynamic import to keep zero-dep for bundlers
         const { Agent } = require("undici");
         this.dispatcher = new Agent({
-          connect: { rejectUnauthorized: false },
+          connect: { rejectUnauthorized },
         });
       } catch {
-        // If undici is not available (browser/edge runtime), fall back to
-        // process.env which only works in Node.js.
-        if (typeof process !== "undefined") {
-          process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-        }
+        // No undici (browser/edge runtime): leave the runtime default in place,
+        // which keeps certificate verification ON. Never mutate the global
+        // NODE_TLS_REJECT_UNAUTHORIZED environment variable.
       }
     }
   }

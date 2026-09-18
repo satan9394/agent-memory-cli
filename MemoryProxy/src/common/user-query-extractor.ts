@@ -159,8 +159,11 @@ export function extractUserQueryText(raw: string): string {
   //       ---
   //     只匹配"至少含 name / description / metadata / node_type 关键字"的 frontmatter
   //     以避免误伤 markdown 分割线。
+  //     注意：`\s` 会跨行，与 `.*` 组合会让 key 行出现多种切分方式 → 指数级回溯
+  //     （CodeQL js/redos）。这里统一用"非换行"字符类，保证每行只有一种匹配方式，
+  //     匹配语义与旧版一致（见等价性测试）。
   text = text.replace(
-    /(?:^|\n)---\s*\n(?:[a-z_][a-z0-9_]*:\s*.*\n)*?(?:name|description|metadata|node_type|originSessionId):[\s\S]*?\n---\s*(?:\n|$)/gi,
+    /(?:^|\n)---[^\S\n]*\n(?:[a-z_][a-z0-9_]*:[^\n]*\n)*?(?:name|description|metadata|node_type|originSessionId):[\s\S]*?\n---[^\S\n]*(?:\n|$)/gi,
     "\n",
   );
 

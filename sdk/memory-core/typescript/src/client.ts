@@ -14,7 +14,7 @@ export interface MemoryClientConfig {
   serviceId: string;
   /** Request timeout in ms (default 30 000). */
   timeout?: number;
-  /** Whether to reject invalid TLS certificates. Default: false (self-signed friendly). */
+  /** Whether to reject invalid TLS certificates. Default: true. */
   rejectUnauthorized?: boolean;
 }
 
