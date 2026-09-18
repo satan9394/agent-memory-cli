@@ -11,6 +11,10 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
+# Least privilege: every job below only reads the repository (build / validate, no publishing).
+permissions:
+  contents: read
+
 defaults:
   run:
     working-directory: MemoryCore
