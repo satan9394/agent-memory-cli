@@ -22,7 +22,7 @@
   "dependencies": {
     "@hono/node-server": "^1.13.0",
     "dotenv": "^16.4.0",
-    "hono": "^4.6.0",
+    "hono": "^4.13.8",
     "ulid": "^2.3.0",
     "zod": "^3.24.0"
   },

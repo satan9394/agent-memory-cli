@@ -10,13 +10,13 @@ importers:
     dependencies:
       '@hono/node-server':
         specifier: ^1.13.0
-        version: 1.19.14(hono@4.12.25)
+        version: 1.19.14(hono@4.13.8)
       dotenv:
         specifier: ^16.4.0
         version: 16.6.1
       hono:
-        specifier: ^4.6.0
-        version: 4.12.25
+        specifier: ^4.13.8
+        version: 4.13.8
       ulid:
         specifier: ^2.3.0
         version: 2.4.0
@@ -573,8 +573,8 @@ packages:
     engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
     os: [darwin]
 
-  hono@4.12.25:
-    resolution: {integrity: sha512-2NFaIyNVgJmBs/ecmtGzlmluTFs5cHEWGTdu0t1HBwYzoGXOL5nUQBRMXsXWla5i4KkG//QMzVP88m1+I3fdAQ==}
+  hono@4.13.8:
+    resolution: {integrity: sha512-/Gng7NfoykZl2pjukW5Z6+8Yxm3BPRf86GTbQnt0SbySkvax4fyL4H3HhY1cCpBGmiW9XDRFzRV+CXK2W8QudQ==}
     engines: {node: '>=16.9.0'}
 
   loupe@3.2.1:
@@ -876,9 +876,9 @@ snapshots:
   '@esbuild/win32-x64@0.28.1':
     optional: true
 
-  '@hono/node-server@1.19.14(hono@4.12.25)':
+  '@hono/node-server@1.19.14(hono@4.13.8)':
     dependencies:
-      hono: 4.12.25
+      hono: 4.13.8
 
   '@jridgewell/sourcemap-codec@1.5.5': {}
 
@@ -1091,7 +1091,7 @@ snapshots:
   fsevents@2.3.3:
     optional: true
 
-  hono@4.12.25: {}
+  hono@4.13.8: {}
 
   loupe@3.2.1: {}
 
