@@ -114,6 +114,8 @@ export class BackendClient {
   private userIdFn: () => string | null;
   /** Resolves the value of the `X-Task-Id` header sent on every call (optional). */
   private taskIdFn: () => string | null;
+  /** Whether to reject invalid TLS certificates. Defaults to true. */
+  private readonly rejectUnauthorized: boolean;
 
   constructor(
     baseUrl: string,
@@ -130,6 +132,16 @@ export class BackendClient {
     this.sessionKeyFn = sessionKeyFn ?? (() => null);
     this.userIdFn = userIdFn ?? (() => null);
     this.taskIdFn = taskIdFn ?? (() => null);
+    // TLS certificate verification is ON by default. Operators must explicitly
+    // opt out with MEMORY_CORE_OFFLOAD_TLS_INSECURE=1 for self-signed dev
+    // backends; it is never disabled implicitly.
+    this.rejectUnauthorized = process.env.MEMORY_CORE_OFFLOAD_TLS_INSECURE !== "1";
+    if (!this.rejectUnauthorized && /^https:/i.test(this.baseUrl)) {
+      logger.warn(
+        "[context-offload] TLS certificate verification is disabled " +
+          "(MEMORY_CORE_OFFLOAD_TLS_INSECURE=1). Use only for local development.",
+      );
+    }
   }
 
   /** L1 Summarize — synchronous await (used by assemble flush + force trigger) */
@@ -296,6 +308,8 @@ export class BackendClient {
     const parsed = new URL(url);
     const isHttps = parsed.protocol === "https:";
     const transport = isHttps ? https : http;
+    // Only attach the TLS override when the operator explicitly opted in.
+    const rejectUnauthorized = this.rejectUnauthorized;
 
     return new Promise<T>((resolve, reject) => {
       const timer = setTimeout(() => {
@@ -309,7 +323,7 @@ export class BackendClient {
           path: parsed.pathname + parsed.search,
           method: "POST",
           headers: reqHeaders,
-          ...(isHttps ? { rejectUnauthorized: false } : {}),
+          ...(isHttps && !rejectUnauthorized ? { rejectUnauthorized } : {}),
         },
         (res) => {
           let data = "";

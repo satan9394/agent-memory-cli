@@ -689,7 +689,7 @@ async function main(): Promise<void> {
   const state = loadState(opts.stateFile, opts.resume);
 
   console.log(`[config] opik=${opts.opikApiBase} workspace=${opts.workspace} memory=${opts.memoryUrl}`);
-  console.log(`[config] target team=${opts.teamId} agent=${opts.agentId} user=${opts.userId} service=${opts.serviceId} dryRun=${opts.dryRun}`);
+  console.log(`[config] target team=${opts.teamId} agent=${opts.agentId} user=<redacted> service=${opts.serviceId} dryRun=${opts.dryRun}`);
 
   const allProjects = await opik.projects();
   const selected = opts.projects.length === 0

@@ -478,7 +478,7 @@ export class MetadataClient {
         detail = await resp.text();
       } catch { /* ignore */ }
       console.log(
-        `[wb-debug] metadata-client req path=${path} status=${resp.status} url=${url} serviceId=${this.serviceId} userKey.len=${this.userKey?.length ?? 0} userKey.prefix=${(this.userKey ?? "").slice(0, 20)} serviceToken.len=${this.serviceToken?.length ?? 0} body.len=${detail.length} body.head=${detail.slice(0, 300)}`,
+        `[wb-debug] metadata-client req path=${path} status=${resp.status} url=${url} body.len=${detail.length} body.head=${detail.slice(0, 300)}`,
       );
       throw new Error(`${TAG} ${path} HTTP ${resp.status}${detail ? `: ${detail.slice(0, 200)}` : ""}`);
     }

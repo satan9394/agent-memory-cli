@@ -16,6 +16,14 @@ import i18n from '@/i18n';
 const ACCOUNTS_KEY = 'tdai-memory.accounts.v1';
 
 /**
+ * Passwords are never persisted to localStorage (clear-text storage). They are
+ * kept in memory for the current session only and re-attached on read. This
+ * mock store only backs legacy username/password login; link A already uses
+ * user_key auth.
+ */
+const sessionPasswords = new Map<string, string>();
+
+/**
  * 生成 12 位随机密码，用作 mock 创建账号时的 fallback（用户未显式填时使用）。
  * 只是 demo 用途，不承载真实凭证 —— 但避免硬编码 `123123` 弱口令入 bundle。
  */
@@ -47,7 +55,16 @@ function getDefaultAccounts(): MockAccount[] {
 
 function writeAccountsRaw(accounts: MockAccount[]): void {
   try {
-    localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(accounts));
+    for (const a of accounts) {
+      if (a.password) sessionPasswords.set(a.email.toLowerCase(), a.password);
+    }
+    const persisted = accounts.map((a) => ({
+      email: a.email,
+      username: a.username,
+      isAdmin: a.isAdmin,
+      description: a.description,
+    }));
+    localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(persisted));
   } catch {
     /* ignore */
   }
@@ -68,9 +85,18 @@ function readAccounts(): MockAccount[] {
       writeAccountsRaw(seeds);
       return seeds;
     }
-    return parsed.filter(
-      (a): a is MockAccount => a && typeof a.email === 'string' && typeof a.username === 'string' && typeof a.password === 'string'
+    const persisted = parsed.filter(
+      (a): a is { email: string; username: string; isAdmin?: boolean; description?: string } =>
+        a && typeof a.email === 'string' && typeof a.username === 'string'
     );
+    // 密码不从 localStorage 读取（不落盘），只从会话内存中回填。
+    return persisted.map((a) => ({
+      email: a.email,
+      username: a.username,
+      isAdmin: a.isAdmin ?? false,
+      description: a.description,
+      password: sessionPasswords.get(a.email.toLowerCase()) ?? '',
+    }));
   } catch {
     const seeds = getDefaultAccounts();
     writeAccountsRaw(seeds);
