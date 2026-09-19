@@ -6,7 +6,7 @@
  *   - 关联关系表：UUID v4（`randomUUID()`）
  */
 
-import { randomUUID } from "node:crypto";
+import { randomInt, randomUUID } from "node:crypto";
 
 const CHARS = "abcdefghijklmnopqrstuvwxyz0123456789";
 const BASE = CHARS.length; // 36
@@ -43,7 +43,7 @@ function encodeBase36(value: number, length: number): string {
 function randomBase36(length: number): string {
   let out = "";
   for (let i = 0; i < length; i++) {
-    out += CHARS[Math.floor(Math.random() * BASE)];
+    out += CHARS[randomInt(BASE)];
   }
   return out;
 }

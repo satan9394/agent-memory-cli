@@ -13,6 +13,12 @@ import { traceOffloadModelIo } from "./opik-tracer.js";
 import * as https from "node:https";
 import * as http from "node:http";
 
+function stripTrailingSlashes(value: string): string {
+  let end = value.length;
+  while (end > 0 && value.charCodeAt(end - 1) === 47) end--;
+  return value.slice(0, end);
+}
+
 // ─── Request / Response Types ────────────────────────────────────────────────
 
 export interface L1Request {
@@ -126,7 +132,7 @@ export class BackendClient {
     userIdFn?: () => string | null,
     taskIdFn?: () => string | null,
   ) {
-    this.baseUrl = baseUrl.replace(/\/+$/, "");
+    this.baseUrl = stripTrailingSlashes(baseUrl);
     this.apiKey = apiKey;
     this.logger = logger;
     this.sessionKeyFn = sessionKeyFn ?? (() => null);

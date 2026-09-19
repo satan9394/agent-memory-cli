@@ -25,6 +25,12 @@ export interface HttpTransportOptions {
   rejectUnauthorized?: boolean;
 }
 
+export function stripTrailingSlashes(value: string): string {
+  let end = value.length;
+  while (end > 0 && value.charCodeAt(end - 1) === 47) end--;
+  return value.slice(0, end);
+}
+
 export class HttpTransport {
   private readonly endpoint: string;
   private readonly headers: Record<string, string>;
@@ -32,7 +38,7 @@ export class HttpTransport {
   private dispatcher: unknown;
 
   constructor(opts: HttpTransportOptions) {
-    this.endpoint = opts.endpoint.replace(/\/+$/, "");
+    this.endpoint = stripTrailingSlashes(opts.endpoint);
     this.timeout = opts.timeout ?? 30_000;
     this.headers = {
       Authorization: `Bearer ${opts.apiKey}`,

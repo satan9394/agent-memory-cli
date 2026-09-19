@@ -90,12 +90,13 @@ export async function post<T = unknown>(
 // ── user / team / agent 装置 ──
 
 let adminKey: string | undefined;
+let fixtureSeq = 0;
 
 async function seedAdminOnce(): Promise<string> {
   if (adminKey) return adminKey;
   const r = await post<{ user_key?: string; default_user_key?: string }>(
     "/v3/internal/meta/user/init-admin",
-    { username: `admin-${Math.random().toString(36).slice(2, 8)}` },
+    { username: `admin-${++fixtureSeq}` },
   );
   expect(r.body.code).toBe(0);
   adminKey = r.body.data!.user_key ?? r.body.data!.default_user_key!;
@@ -117,7 +118,7 @@ export async function makeFixture(tag: string, messageCount = 3): Promise<Fixtur
   const key = await seedAdminOnce();
   const u = await post<{ user_id: string; default_user_key: string }>(
     "/v3/meta/user/create",
-    { username: `u-${tag}-${Math.random().toString(36).slice(2, 6)}` },
+    { username: `u-${tag}-${++fixtureSeq}` },
     { userKey: key },
   );
   expect(u.body.code).toBe(0);

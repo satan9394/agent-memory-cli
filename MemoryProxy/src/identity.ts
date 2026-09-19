@@ -123,6 +123,9 @@ export function extractClientIdentity(
     }
   }
 
+  // Lookup / pseudonymization index for trace grouping, not password storage:
+  // the input is a high-entropy API key and nothing is persisted for comparison,
+  // so a fast hash is intentional and CWE-916 does not apply.
   const keyId = apiKey
     ? createHash("sha256").update(apiKey).digest("hex").slice(0, 8)
     : "unknown";

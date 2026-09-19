@@ -17,6 +17,7 @@
  */
 
 import { TDAMError } from "./errors.js";
+import { stripTrailingSlashes } from "./http.js";
 import { createHmac, createHash } from "node:crypto";
 
 // ============================
@@ -123,7 +124,7 @@ export class StsCredentialManager {
     config: MemoryFileReaderConfig,
     bufferMs = 120_000,
   ) {
-    this.endpoint = config.endpoint.replace(/\/+$/, "");
+    this.endpoint = stripTrailingSlashes(config.endpoint);
     this.apiKey = config.apiKey;
     this.serviceId = config.serviceId;
     this.timeout = config.timeout ?? 30_000;
