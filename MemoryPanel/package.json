@@ -20,7 +20,7 @@
     "mock-kernel": "tsx scripts/mock-memory-server.ts"
   },
   "dependencies": {
-    "@hono/node-server": "^1.13.0",
+    "@hono/node-server": "^1.19.15",
     "dotenv": "^16.4.0",
     "hono": "^4.13.8",
     "ulid": "^2.3.0",
