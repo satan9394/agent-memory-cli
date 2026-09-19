@@ -9,7 +9,7 @@
  * v3.1 起元数据 User 域不再使用 password 哈希；本模块仅保留 generateUserKey 与历史 hash 工具。
  */
 
-import { randomBytes, scryptSync, timingSafeEqual } from "node:crypto";
+import { randomBytes, randomInt, scryptSync, timingSafeEqual } from "node:crypto";
 import { USER_KEY_PREFIX } from "./user-key.js";
 
 /**
@@ -26,10 +26,9 @@ const PASSWORD_CHARSET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01
 
 /** 生成随机密码（默认 12 位，字符集：大小写字母、数字、下划线）。 */
 export function generatePassword(length = 12): string {
-  const bytes = randomBytes(length);
   let out = "";
   for (let i = 0; i < length; i++) {
-    out += PASSWORD_CHARSET[bytes[i]! % PASSWORD_CHARSET.length];
+    out += PASSWORD_CHARSET[randomInt(PASSWORD_CHARSET.length)];
   }
   return out;
 }

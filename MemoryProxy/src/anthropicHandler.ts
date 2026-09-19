@@ -421,9 +421,9 @@ async function forwardWithRetry(
       const prefixEnd = anchorIdx >= 0 ? anchorIdx + 1 : msgs.length;
       const msgsPrefixStr = JSON.stringify(msgs.slice(0, prefixEnd));
 
-      const sysFullMd5 = createHash("md5").update(sysFullStr).digest("hex").slice(0, 12);
-      const sysTextMd5 = createHash("md5").update(sysTextStr).digest("hex").slice(0, 12);
-      const msgsPrefixMd5 = createHash("md5").update(msgsPrefixStr).digest("hex").slice(0, 12);
+      const sysFullMd5 = createHash("sha256").update(sysFullStr).digest("hex").slice(0, 12);
+      const sysTextMd5 = createHash("sha256").update(sysTextStr).digest("hex").slice(0, 12);
+      const msgsPrefixMd5 = createHash("sha256").update(msgsPrefixStr).digest("hex").slice(0, 12);
 
       // eslint-disable-next-line no-console
       console.log(

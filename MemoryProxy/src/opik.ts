@@ -33,7 +33,13 @@ function uuidv7(): string {
   return `${p1}-${p2}-${p3}-${p4}-${p5}`;
 }
 
-/** Derive an 8-char key ID from an API key (SHA-256 first 8 hex chars). */
+/** Derive an 8-char key ID from an API key (SHA-256 first 8 hex chars).
+ *
+ *  This is a lookup / pseudonymization index for trace grouping, not password
+ *  storage or verification: the input is a high-entropy API key and nothing is
+ *  persisted for later comparison. A fast hash is therefore intentional and
+ *  CWE-916 (insufficient password hash) does not apply.
+ */
 export function apiKeyToKeyId(apiKey: string): string {
   return createHash("sha256").update(apiKey).digest("hex").slice(0, 8);
 }

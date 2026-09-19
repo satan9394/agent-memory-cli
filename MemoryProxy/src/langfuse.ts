@@ -105,6 +105,9 @@ export async function shutdownLangfuse(): Promise<void> {
  * 与官方 `createTraceId(seed)` 算法一致：SHA-256(seed) 的 hex 取前 32 位。
  * 同一 turn 内每次请求都用相同 (sessionKey, turnSeq) → 得到相同 traceId →
  * 在 Langfuse 中归并到同一个 trace。
+ *
+ * 这是 trace 归并用的确定性索引，不是密码存储/校验：输入为高熵 API key 派生的
+ * sessionKey，且不落库做比对，因此使用快速哈希是有意为之，CWE-916 不适用。
  */
 export function langfuseTurnTraceId(sessionKey: string, turnSeq: number): string {
   const seed = `${sessionKey}:${turnSeq}`;

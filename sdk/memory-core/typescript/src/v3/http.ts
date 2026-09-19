@@ -2,7 +2,7 @@
 
 import { Agent } from "undici";
 import { ParamError, TDAMError } from "../errors.js";
-import type { HttpTransportOptions } from "../http.js";
+import { stripTrailingSlashes, type HttpTransportOptions } from "../http.js";
 import type { ApiResponseEnvelope } from "../types.js";
 
 export class V3HttpTransport {
@@ -28,7 +28,7 @@ export class V3HttpTransport {
       throw new ParamError("timeout must be a positive number");
     }
 
-    this.endpoint = opts.endpoint.replace(/\/+$/, "");
+    this.endpoint = stripTrailingSlashes(opts.endpoint);
     this.timeout = timeout;
     this.headers = {
       Authorization: `Bearer ${opts.apiKey}`,
